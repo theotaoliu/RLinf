@@ -363,6 +363,11 @@ def prepare_actions(
         )
     elif env_type == SupportedEnvType.ROBOTWIN:
         chunk_actions = raw_chunk_actions
+    elif env_type == SupportedEnvType.ALOHA2SIM:
+        # Pass-through, exactly like ROBOTWIN. Every ALOHA-specific conversion already
+        # happens inside AlohaOutputs / _encode_actions in the policy transform stack;
+        # repeating it here would apply it twice.
+        chunk_actions = raw_chunk_actions
     elif env_type == SupportedEnvType.EMBODICHAIN:
         chunk_actions = raw_chunk_actions
     elif env_type == SupportedEnvType.METAWORLD:

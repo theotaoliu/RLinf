@@ -26,6 +26,7 @@ class SupportedEnvType(Enum):
     MANISKILL_RLT = "maniskill_rlt"
     LIBERO = "libero"
     ROBOTWIN = "robotwin"
+    ALOHA2SIM = "aloha2sim"
     ISAACLAB = "isaaclab"
     METAWORLD = "metaworld"
     BEHAVIOR = "behavior"
@@ -80,6 +81,11 @@ def get_env_cls(env_type: str, env_cfg=None):
         from rlinf.envs.robotwin.robotwin_env import RoboTwinEnv
 
         return RoboTwinEnv
+    elif env_type == SupportedEnvType.ALOHA2SIM:
+        # MuJoCo simulation of the lab ALOHA-2 workcell, installed separately.
+        from aloha2sim.rlinf_adapter import Aloha2SimEnv
+
+        return Aloha2SimEnv
     elif env_type == SupportedEnvType.ISAACLAB:
         from rlinf.envs.isaaclab import REGISTER_ISAACLAB_ENVS
 
