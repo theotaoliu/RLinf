@@ -451,6 +451,32 @@ _CONFIGS = [
         pytorch_weight_path="checkpoints/torch/pi05_base",
         num_train_steps=20_000,
     ),
+    # aloha2sim, the lab's own MuJoCo cell. Copied from pi05_aloha_robotwin and differing
+    # only in where the data and the statistics come from -- the model, the delta
+    # transform and the three-camera repack are all RoboTwin's, because the observation
+    # and action contracts are identical by construction.
+    #
+    # The assets dir is the point of the whole thing. pi05_aloha_robotwin reads
+    # checkpoints/torch/pi05_aloha_robotwin/assets, i.e. RoboTwin's normalisation, and
+    # running aloha2sim observations through another task's statistics is what leaves the
+    # reward identically zero: the policy is handed inputs standardised against the wrong
+    # distribution, returns nothing usable, and no episode ever succeeds for a gradient to
+    # learn from. scripts/m10_norm_stats.py writes the statistics this points at.
+    TrainConfig(
+        name="pi05_aloha2sim",
+        model=pi0_config.Pi0Config(pi05=True, discrete_state_input=True),
+        data=LeRobotAlohaDataConfig(
+            # A path here does not work: openpi calls LeRobotDataset(repo_id) with no root,
+            # so lerobot validates it as a hub id and resolves HF_LEROBOT_HOME/<repo_id>.
+            # scripts/m10_collect_demos.py writes to exactly that.
+            repo_id="aloha2sim/hidden_property_grasp",
+            base_config=DataConfig(prompt_from_task=True),
+            assets=AssetsConfig(assets_dir="checkpoints/torch/pi05_aloha2sim/assets"),
+            extra_delta_transform=True,
+        ),
+        pytorch_weight_path="checkpoints/torch/pi05_base",
+        num_train_steps=20_000,
+    ),
     TrainConfig(
         name="pi0_behavior",
         model=pi0_config.Pi0Config(),
